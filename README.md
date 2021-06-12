@@ -4,10 +4,8 @@
 
 - Dimensions: 920x600
 
-- Better player movement
-	- better left/right movement
-	- Jump only on ground
 - Art
+	- outside bg tan, first block blue?
 	- Inside
 		- Player animation
 		- Connecting line
@@ -17,7 +15,7 @@
 	- Jump
 	- Touch first heart
 	- Connect hearts
-	- Music
+	- Music (layered track if possible)
 - Levels
 	- First level
 	- Advanced back-and-forth
