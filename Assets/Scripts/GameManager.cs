@@ -159,10 +159,10 @@ public class GameManager : MonoBehaviour
             foreach (BlockDrag block in allBlocks)
 			{
                 block.face.SetActive(true);
-			}
+            }
 
-            draggingBlock.gameObject.GetComponent<BlockDrag>().dragging = true;
-
+            draggingBlock.gameObject.GetComponent<BlockDrag>().SetDragging(true);
+            
             Camera.main.backgroundColor = outsideColor;
         }
     }
@@ -205,7 +205,7 @@ public class GameManager : MonoBehaviour
             if (done) break;
         }
 
-        draggingBlock.gameObject.GetComponent<BlockDrag>().dragging = false;
+        draggingBlock.gameObject.GetComponent<BlockDrag>().SetDragging(false);
         draggingBlock.constraints = RigidbodyConstraints2D.FreezeAll;
         draggingBlock = null;
 

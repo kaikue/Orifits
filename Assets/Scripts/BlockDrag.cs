@@ -6,6 +6,8 @@ using UnityEngine.Tilemaps;
 public class BlockDrag : MonoBehaviour
 {
     public GameObject face;
+    public GameObject inside;
+    public Tilemap tilemap;
     public Color color;
     public Sprite idleFace;
     public Sprite draggingFace;
@@ -23,16 +25,25 @@ public class BlockDrag : MonoBehaviour
 		{
             image.color = color;
 		}
-        Tilemap tilemap = GetComponentInChildren<Tilemap>();
         tilemap.color = color;
 
         allOrifices = FindObjectsOfType<Orifice>();
         myOrifices = gameObject.GetComponentsInChildren<Orifice>();
     }
 
+    private void SetVisualPosition(Vector3 position)
+    {
+        face.transform.localPosition = position;
+        foreach (Orifice orifice in myOrifices)
+        {
+            orifice.outsideRenderer.transform.localPosition = position;
+        }
+    }
+
     private void Update()
 	{
         bool connected = false;
+        SetVisualPosition(Vector3.zero);
         foreach (Orifice orifice in allOrifices)
         {
             if (orifice.transform.parent == transform) continue;
@@ -41,6 +52,12 @@ public class BlockDrag : MonoBehaviour
                 float distance = Vector3.Distance(orifice.transform.position, myOrifice.transform.position);
                 if (distance < GameManager.snapDistance)
                 {
+                    if (dragging)
+                    {
+                        Vector3 offset = orifice.transform.position - myOrifice.transform.position;
+                        SetVisualPosition(offset);
+                    }
+
                     connected = true;
                     break;
                 }
@@ -60,5 +77,12 @@ public class BlockDrag : MonoBehaviour
             faceRenderer.sprite = idleFace;
             //TODO look at other
         }
+    }
+
+    public void SetDragging(bool dragging)
+	{
+        this.dragging = dragging;
+        tilemap.gameObject.SetActive(!dragging);
+        inside.SetActive(!dragging);
     }
 }

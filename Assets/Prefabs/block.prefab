@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &272870130047352
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 173211961084309800}
+  m_Layer: 6
+  m_Name: inside
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &173211961084309800
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272870130047352}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 7996745149398605594}
+  m_Father: {fileID: 1659557055206481887}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &941021062837235748
 GameObject:
   m_ObjectHideFlags: 0
@@ -157,9 +188,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1659557054730340721}
+  - {fileID: 173211961084309800}
   - {fileID: 1714538356546002112}
   - {fileID: 7068963922848555455}
-  - {fileID: 7996745149398605594}
   - {fileID: 2193318287551433397}
   - {fileID: 2792381717369348332}
   m_Father: {fileID: 0}
@@ -178,6 +209,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   face: {fileID: 6556173415783235416}
+  inside: {fileID: 272870130047352}
+  tilemap: {fileID: 1659557055281926151}
   color: {r: 1, g: 0.8062848, b: 0.08627451, a: 1}
   idleFace: {fileID: 21300000, guid: 48fc8267e566c83438573a67faecd9eb, type: 3}
   draggingFace: {fileID: 21300000, guid: 9becb2252fc82f34eabadb663ace6a93, type: 3}
@@ -1202,8 +1235,8 @@ Transform:
   m_LocalPosition: {x: -2, y: -3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1659557055206481887}
-  m_RootOrder: 3
+  m_Father: {fileID: 173211961084309800}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6959194739545529904
 SpriteRenderer:
@@ -1392,7 +1425,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8272124590310185723, guid: 0ddc15c3254738245b2844d01ec5620d, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8272124590310185723, guid: 0ddc15c3254738245b2844d01ec5620d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1418,7 +1451,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1068480838780640655, guid: 64436bb3d7289ed4281f3fef749f07e8, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1068480838780640655, guid: 64436bb3d7289ed4281f3fef749f07e8, type: 3}
       propertyPath: m_LocalPosition.x

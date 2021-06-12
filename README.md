@@ -25,19 +25,17 @@
 	- T, U
 	- More rotate
 	- 69
+	- 3some?
 - Extra polish
 	- Blocks look at each other
 	- Backgrounds
 	- Blocks wobble when grabbed
 	- Round corners of block guys' colliders for better dragging
-	- Cover block borders with orifices
 	- Particles
 	- Connect hearts with rope physics
 	- Beating hearts
 - Lerp everything for polish
-	- block faces
-		- Render placeholder player while dragging? on top and/or below fade?
-	- scene transitions
-		- show how happy the blocks are now :-)
+	- block faces fade in/out
+	- level transitions
 	- block position dragging/rotating
 		- slide around more
