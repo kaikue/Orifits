@@ -6,7 +6,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public const float connectionDistance = 0.1f;
-    private const float snapDistance = 2.5f;
+    public const float snapDistance = 2.5f;
+    private Color outsideColor = new Color(0.6f, 1, 1);
 
     private PlayerMove player;
     private Orifice[] allOrifices;
@@ -143,6 +144,12 @@ public class GameManager : MonoBehaviour
                 player.transform.parent = draggingBlock.transform;
             }
 
+            foreach (Orifice orifice in allOrifices)
+            {
+                orifice.blockerRenderer.enabled = false;
+                orifice.outsideRenderer.enabled = true;
+            }
+
             Orifice[] draggingOrifices = draggingBlock.gameObject.GetComponentsInChildren<Orifice>();
             foreach (Orifice orifice in draggingOrifices)
             {
@@ -153,6 +160,10 @@ public class GameManager : MonoBehaviour
 			{
                 block.face.SetActive(true);
 			}
+
+            draggingBlock.gameObject.GetComponent<BlockDrag>().dragging = true;
+
+            Camera.main.backgroundColor = outsideColor;
         }
     }
 
@@ -194,6 +205,7 @@ public class GameManager : MonoBehaviour
             if (done) break;
         }
 
+        draggingBlock.gameObject.GetComponent<BlockDrag>().dragging = false;
         draggingBlock.constraints = RigidbodyConstraints2D.FreezeAll;
         draggingBlock = null;
 
@@ -202,7 +214,14 @@ public class GameManager : MonoBehaviour
             block.face.SetActive(false);
         }
 
+        foreach (Orifice orifice in allOrifices)
+        {
+            orifice.blockerRenderer.enabled = true;
+            orifice.outsideRenderer.enabled = false;
+        }
+
         CenterCamera();
+        Camera.main.backgroundColor = Color.black;
 
         player.transform.parent = null;
         player.transform.rotation = Quaternion.identity;

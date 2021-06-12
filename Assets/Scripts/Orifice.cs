@@ -7,6 +7,8 @@ public class Orifice : MonoBehaviour
     public GameObject blocker;
     private Orifice pairedOrifice;
     private bool open = false;
+    public SpriteRenderer blockerRenderer;
+    public SpriteRenderer outsideRenderer;
 
     private void Start()
     {

@@ -9,15 +9,9 @@
 	- Jump only on ground
 - Art
 	- Inside
-		- Player
-		- Tiles
-		- Hearts
-	- Outside
-		- Orifices
-		- Faces
-		- Different colors (set this in the script and apply to white bases)
-		- Borders?
-	- Backgrounds
+		- Player animation
+		- Connecting line
+		- Organic looking decorations
 - Sound
 	- Squishy sound effects for attach/separate
 	- Jump
@@ -31,6 +25,15 @@
 	- T, U
 	- More rotate
 	- 69
+- Extra polish
+	- Blocks look at each other
+	- Backgrounds
+	- Blocks wobble when grabbed
+	- Round corners of block guys' colliders for better dragging
+	- Cover block borders with orifices
+	- Particles
+	- Connect hearts with rope physics
+	- Beating hearts
 - Lerp everything for polish
 	- block faces
 		- Render placeholder player while dragging? on top and/or below fade?
@@ -38,8 +41,3 @@
 		- show how happy the blocks are now :-)
 	- block position dragging/rotating
 		- slide around more
-- Extra polish
-	- Round corners of block guys' colliders for better dragging
-	- Particles
-	- Connect hearts with rope physics
-	- Beating hearts
