@@ -16,6 +16,8 @@ public class PlayerMove : MonoBehaviour
     private Heart tetheredHeart = null;
     private LineRenderer tetherRenderer;
 
+    private int keys = 0;
+
     public GameObject insideBlock;
 
     private void Start()
@@ -44,16 +46,26 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+    private bool CheckSide(int point0, int point1, Vector2 direction)
+	{
+        Vector2 startPoint = rb.position + ec.points[point0] + direction * 0.1f;
+        Vector2 endPoint = rb.position + ec.points[point1] + direction * 0.1f;
+        RaycastHit2D hit = Physics2D.Raycast(startPoint, endPoint - startPoint, Vector2.Distance(startPoint, endPoint), LayerMask.GetMask("Blocker", "Tiles"));
+        return hit.collider != null;
+    }
+
     private void FixedUpdate()
     {
         float xInput = Input.GetAxis("Horizontal");
         float xVel = xInput * speed;
 
-        Vector2 startPoint = rb.position + ec.points[4] + Vector2.down * 0.1f;
-        Vector2 endPoint = rb.position + ec.points[3] + Vector2.down * 0.1f;
-        RaycastHit2D hit = Physics2D.Raycast(startPoint, endPoint - startPoint, Vector2.Distance(startPoint, endPoint), LayerMask.GetMask("Tiles"));
-        bool onGround = hit.collider != null;
+        bool onGround = CheckSide(4, 3, Vector2.down);
+        bool onCeiling = CheckSide(1, 2, Vector2.up);
         float yVel = onGround ? 0 : rb.velocity.y - gravityForce * Time.fixedDeltaTime;
+        if (onCeiling)
+		{
+            yVel = Mathf.Min(yVel, 0);
+		}
 
         if (jumpQueued)
         {
@@ -70,14 +82,40 @@ public class PlayerMove : MonoBehaviour
         rb.MovePosition(rb.position + vel * Time.fixedDeltaTime);
     }
 
+	private void OnCollisionEnter2D(Collision2D collision)
+    {
+        GameObject collider = collision.collider.gameObject;
+        if (collider.CompareTag("Door"))
+		{
+            if (keys > 0)
+			{
+                keys--;
+                //TODO play door open sound
+                Destroy(collider);
+            }
+            else
+			{
+                //TODO play door locked sound
+			}
+		}
+	}
+
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-        if (collision.gameObject.CompareTag("BlockTrigger"))
+        GameObject collider = collision.gameObject;
+        if (collider.CompareTag("BlockTrigger"))
 		{
-            insideBlock = collision.gameObject;
-		}
+            insideBlock = collider;
+        }
 
-        Heart heart = collision.gameObject.GetComponent<Heart>();
+        if (collider.CompareTag("Key"))
+        {
+            keys++;
+            //TODO play key collect sound
+            Destroy(collider);
+        }
+
+        Heart heart = collider.GetComponent<Heart>();
         if (heart != null)
 		{
             if (tetheredHeart == null)

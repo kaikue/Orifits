@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Orifice
   - BlockTrigger
+  - Key
+  - Door
   layers:
   - Default
   - TransparentFX

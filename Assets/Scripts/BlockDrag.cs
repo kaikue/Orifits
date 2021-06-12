@@ -33,6 +33,7 @@ public class BlockDrag : MonoBehaviour
 
     private void SetVisualPosition(Vector3 position)
     {
+        position = Quaternion.Inverse(transform.rotation) * position;
         face.transform.localPosition = position;
         foreach (Orifice orifice in myOrifices)
         {
