@@ -5,6 +5,7 @@
 - Dimensions: 920x600
 
 - Better player movement
+	- better left/right movement
 	- Jump only on ground
 - Art
 	- Inside
@@ -37,7 +38,8 @@
 		- show how happy the blocks are now :-)
 	- block position dragging/rotating
 		- slide around more
-- Round corners of block guys for better dragging
 - Extra polish
+	- Round corners of block guys' colliders for better dragging
 	- Particles
+	- Connect hearts with rope physics
 	- Beating hearts

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -24,6 +25,13 @@ public class GameManager : MonoBehaviour
         player = FindObjectOfType<PlayerMove>();
         allOrifices = FindObjectsOfType<Orifice>();
         allBlocks = FindObjectsOfType<BlockDrag>();
+        CenterCamera();
+    }
+
+    private void CenterCamera()
+	{
+        Vector2 centerPos = allBlocks.Select(block => block.transform.position).Aggregate((x, y) => x + y) / allBlocks.Length;
+        Camera.main.transform.position = new Vector3(centerPos.x, centerPos.y, Camera.main.transform.position.z);
     }
 
     private void Update()
@@ -162,8 +170,8 @@ public class GameManager : MonoBehaviour
                 float distance = Vector3.Distance(orifice.transform.position, draggingOrifice.transform.position);
                 if (distance < snapDistance)
 				{
-                    Vector2 offset = orifice.transform.position - draggingOrifice.transform.position;
-                    draggingBlock.position += offset;
+                    Vector3 offset = orifice.transform.position - draggingOrifice.transform.position;
+                    draggingBlock.transform.position += offset;
 
                     //open all connecting orifices (may be more than just this one pair)
                     foreach (Orifice otherOrificeToOpen in allOrifices)
@@ -171,8 +179,7 @@ public class GameManager : MonoBehaviour
                         if (otherOrificeToOpen.transform.parent == draggingBlock.transform) continue;
                         foreach (Orifice myOrificeToOpen in draggingOrifices)
                         {
-                            Vector3 futurePos = myOrificeToOpen.transform.position + new Vector3(offset.x, offset.y);
-                            float d = Vector3.Distance(otherOrificeToOpen.transform.position, futurePos);
+                            float d = Vector3.Distance(otherOrificeToOpen.transform.position, myOrificeToOpen.transform.position);
                             if (d < connectionDistance)
                             {
                                 myOrificeToOpen.OpenWith(otherOrificeToOpen);
@@ -194,6 +201,8 @@ public class GameManager : MonoBehaviour
         {
             block.face.SetActive(false);
         }
+
+        CenterCamera();
 
         player.transform.parent = null;
         player.transform.rotation = Quaternion.identity;
