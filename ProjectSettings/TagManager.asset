@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Orifice
+  - BlockTrigger
   layers:
   - Default
   - TransparentFX

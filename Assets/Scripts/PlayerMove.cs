@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -17,13 +18,24 @@ public class PlayerMove : MonoBehaviour
     private bool stopRight = false;
     private bool jumpQueued = false;
 
+    private Heart tetheredHeart = null;
+    private LineRenderer tetherRenderer;
+
+    public GameObject insideBlock;
+
     private void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
+        tetherRenderer = gameObject.GetComponent<LineRenderer>();
     }
 
     private void Update()
     {
+        if (Input.GetButtonDown("Restart"))
+		{
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
         if (Input.GetAxisRaw("Horizontal") < 0 && !leftPressed)
         {
             leftPressed = true;
@@ -53,6 +65,12 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
 		{
             jumpQueued = true;
+        }
+
+        if (tetherRenderer.enabled)
+        {
+            tetherRenderer.SetPosition(0, tetheredHeart.transform.position);
+            tetherRenderer.SetPosition(1, transform.position);
         }
     }
 
@@ -86,11 +104,34 @@ public class PlayerMove : MonoBehaviour
 
         if (jumpQueued)
 		{
-
             //TODO check for collision on feet
             //TODO play jump sound
             rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
             jumpQueued = false;
         }
     }
+
+	private void OnTriggerEnter2D(Collider2D collision)
+	{
+        if (collision.gameObject.CompareTag("BlockTrigger"))
+		{
+            insideBlock = collision.gameObject;
+		}
+
+        Heart heart = collision.gameObject.GetComponent<Heart>();
+        if (heart != null)
+		{
+            if (tetheredHeart == null)
+			{
+                tetheredHeart = heart;
+                tetherRenderer.enabled = true;
+                tetherRenderer.SetPosition(0, tetheredHeart.transform.position);
+                tetherRenderer.SetPosition(1, transform.position);
+            }
+            else if (heart != tetheredHeart)
+			{
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); //TODO nicer transition
+			}
+		}
+	}
 }

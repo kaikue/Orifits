@@ -5,14 +5,14 @@ using UnityEngine;
 public class BlockDrag : MonoBehaviour
 {
     public GameObject face;
+    public Color color;
 
     private void Start()
     {
-        
-    }
-
-    private void Update()
-    {
-        
+        SpriteRenderer[] images = face.GetComponentsInChildren<SpriteRenderer>();
+        foreach (SpriteRenderer image in images)
+		{
+            image.color = color;
+		}
     }
 }

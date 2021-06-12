@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public const float connectionDistance = 0.1f;
+    private const float snapDistance = 2.5f;
+
     private PlayerMove player;
-    private BlockDrag[] blocks;
+    private Orifice[] allOrifices;
+    private BlockDrag[] allBlocks;
     private Rigidbody2D draggingBlock = null;
     private Vector2 dragOffset;
     private Vector2 rotateAnchor;
@@ -18,7 +22,8 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         player = FindObjectOfType<PlayerMove>();
-        blocks = FindObjectsOfType<BlockDrag>();
+        allOrifices = FindObjectsOfType<Orifice>();
+        allBlocks = FindObjectsOfType<BlockDrag>();
     }
 
     private void Update()
@@ -38,10 +43,8 @@ public class GameManager : MonoBehaviour
 
             if (Input.GetButtonUp("MouseRight"))
             {
-                //exit ROTATE MODE
                 rotating = false;
                 //rotate draggingBlock to nearest 90 degree angle
-                print(draggingBlock.rotation);
                 float roundedRot = Mathf.Round(draggingBlock.rotation / 90) * 90;
                 draggingBlock.SetRotation(roundedRot);
                 //draggingBlock.MoveRotation(roundedRot); //TODO lerp to it and wait a bit before freezing rotation?
@@ -53,14 +56,11 @@ public class GameManager : MonoBehaviour
                 }
                 else
 				{
-                    draggingBlock.constraints = RigidbodyConstraints2D.FreezeAll;
-                    draggingBlock = null;
+                    ReleaseDraggingBlock();
                 }
             }
             else
 			{
-                //in ROTATE MODE- rotate dragging block
-
                 float rotateSpeed = 3;
                 Vector2 mouseOffset = mousePos - rotateAnchor;
                 float rotateDiff = -mouseOffset.x + mouseOffset.y;
@@ -89,8 +89,7 @@ public class GameManager : MonoBehaviour
             else if (Input.GetButtonUp("MouseLeft"))
             {
                 dragging = false;
-                draggingBlock.constraints = RigidbodyConstraints2D.FreezeAll;
-                draggingBlock = null;
+                ReleaseDraggingBlock();
             }
             else
 			{
@@ -101,23 +100,19 @@ public class GameManager : MonoBehaviour
 		{
             if (Input.GetButtonDown("MouseLeft"))
             {
-                RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1, LayerMask.GetMask("Block"));
-                if (hit.collider != null)
-                {
-                    draggingBlock = hit.collider.GetComponent<Rigidbody2D>();
-                    //TODO deactivate player and parent it to the block it's in
+                GrabDraggingBlock(mousePos);
+                if (draggingBlock != null)
+				{
                     draggingBlock.constraints = RigidbodyConstraints2D.FreezeRotation;
-                    dragOffset = new Vector2(draggingBlock.position.x - hit.point.x, draggingBlock.position.y - hit.point.y);
+                    dragOffset = new Vector2(draggingBlock.position.x - mousePos.x, draggingBlock.position.y - mousePos.y);
                     dragging = true;
                 }
             }
             if (Input.GetButtonDown("MouseRight"))
             {
-                RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1, LayerMask.GetMask("Block"));
-                if (hit.collider != null)
+                GrabDraggingBlock(mousePos);
+                if (draggingBlock != null)
                 {
-                    draggingBlock = hit.collider.GetComponent<Rigidbody2D>();
-                    //TODO deactivate player and parent it to the block it's in
                     draggingBlock.constraints = RigidbodyConstraints2D.FreezePosition;
                     rotateAnchor = mousePos;
                     baseRotation = draggingBlock.rotation;
@@ -125,74 +120,83 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+    }
 
+    private void GrabDraggingBlock(Vector2 mousePos)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1, LayerMask.GetMask("Block"));
+        if (hit.collider != null)
+        {
+            draggingBlock = hit.collider.GetComponent<Rigidbody2D>();
 
-        /*if (draggingBlock != null)
-		{
-            if (Input.GetButtonUp("MouseLeft"))
-			{
-                //drop the block
-                //snap the block to the connecting orifice if appropriate
-                //go back to playing mode
-                //(exit rotation mode too, just to be safe)
-                //recenter the camera (on the average of all blocks?)
-
-                draggingBlock.constraints = RigidbodyConstraints2D.FreezeAll;
-                draggingBlock = null;
-            }
-            else if (Input.GetButtonDown("MouseRight"))
+            if (player.insideBlock.transform.parent == draggingBlock.transform)
             {
-                //enter ROTATION MODE
-                draggingBlock.constraints = RigidbodyConstraints2D.FreezePosition;
-                rotateAnchor = mousePos;
-                baseRotation = draggingBlock.rotation;
-			}
-            else if (Input.GetButtonUp("MouseRight"))
+                player.gameObject.SetActive(false);
+                player.transform.parent = draggingBlock.transform;
+            }
+
+            Orifice[] draggingOrifices = draggingBlock.gameObject.GetComponentsInChildren<Orifice>();
+            foreach (Orifice orifice in draggingOrifices)
             {
-                //exit ROTATION MODE
-                draggingBlock.constraints = RigidbodyConstraints2D.FreezeRotation;
-                dragOffset = new Vector2(draggingBlock.position.x - mousePos.x, draggingBlock.position.y - mousePos.y);
-                //TODO rotate dbrb to nearest 90 degree angle
+                orifice.Close();
             }
-            else if (Input.GetButton("MouseRight"))
-			{
-                //in ROTATE MODE- rotate dragging block
 
-                float rotateSpeed = 3;
-                Vector2 mouseOffset = mousePos - rotateAnchor;
-                float rotateDiff = -mouseOffset.x + mouseOffset.y;
-                draggingBlock.MoveRotation(baseRotation + rotateDiff * rotateSpeed);
-
-                //TODO better rotating method
-                //TODO: this is giving wrong values?
-                //float goalRotation = (Mathf.Rad2Deg * Mathf.Atan2(mousePos.y - rotateAnchor.y, mousePos.x - rotateAnchor.x) + 90 + baseRotation) % 360;
-                //float effect = Vector2.Distance(mousePos, rotateAnchor) / rotateDampen;
-                //float rot = Mathf.LerpAngle(baseRotation, goalRotation, effect) % 360;
-                //print(goalRotation + " " + rot + " " + effect);
-                //draggingBlock.MoveRotation(rot);
-            }
-            else
+            foreach (BlockDrag block in allBlocks)
 			{
-                //move dragging block with cursor
-                draggingBlock.MovePosition(mousePos + dragOffset);
+                block.face.SetActive(true);
 			}
         }
-        else
-		{
-            if (Input.GetButtonDown("MouseLeft"))
-			{
-                //if one of the blocks is under mouse:
-                //go into dragging mode
-                //drag that block
-                //deactivate player and parent it to the block it's in
-                RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1, LayerMask.GetMask("Block"));
-                if (hit.collider != null)
-                {
-                    draggingBlock = hit.collider.GetComponent<Rigidbody2D>();
-                    dragOffset = new Vector2(draggingBlock.position.x - hit.point.x, draggingBlock.position.y - hit.point.y);
-                    draggingBlock.constraints = RigidbodyConstraints2D.FreezeRotation;
-                }
-			}
-        }*/
+    }
+
+    private void ReleaseDraggingBlock()
+	{
+        //snap dragging block to align orifices if nearby
+        Orifice[] draggingOrifices = draggingBlock.gameObject.GetComponentsInChildren<Orifice>();
+        foreach (Orifice orifice in allOrifices)
+        {
+            if (orifice.transform.parent == draggingBlock.transform) continue;
+
+            bool done = false;
+            foreach (Orifice draggingOrifice in draggingOrifices)
+            {
+                float distance = Vector3.Distance(orifice.transform.position, draggingOrifice.transform.position);
+                if (distance < snapDistance)
+				{
+                    Vector2 offset = orifice.transform.position - draggingOrifice.transform.position;
+                    draggingBlock.position += offset;
+
+                    //open all connecting orifices (may be more than just this one pair)
+                    foreach (Orifice otherOrificeToOpen in allOrifices)
+                    {
+                        if (otherOrificeToOpen.transform.parent == draggingBlock.transform) continue;
+                        foreach (Orifice myOrificeToOpen in draggingOrifices)
+                        {
+                            Vector3 futurePos = myOrificeToOpen.transform.position + new Vector3(offset.x, offset.y);
+                            float d = Vector3.Distance(otherOrificeToOpen.transform.position, futurePos);
+                            if (d < connectionDistance)
+                            {
+                                myOrificeToOpen.OpenWith(otherOrificeToOpen);
+                            }
+                        }
+                    }
+
+                    done = true;
+                    break;
+				}
+            }
+            if (done) break;
+        }
+
+        draggingBlock.constraints = RigidbodyConstraints2D.FreezeAll;
+        draggingBlock = null;
+
+        foreach (BlockDrag block in allBlocks)
+        {
+            block.face.SetActive(false);
+        }
+
+        player.transform.parent = null;
+        player.transform.rotation = Quaternion.identity;
+        player.gameObject.SetActive(true);
     }
 }

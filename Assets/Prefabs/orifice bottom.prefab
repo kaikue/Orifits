@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6998992707313712196}
   - component: {fileID: 92642181295439212}
   m_Layer: 7
-  m_Name: blocker
+  m_Name: blocker bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -119,9 +119,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8272124590310185723}
   - component: {fileID: 3230893649902163080}
+  - component: {fileID: 1099125788614003679}
   m_Layer: 0
   m_Name: orifice bottom
-  m_TagString: Orifice
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -192,3 +193,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1099125788614003679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2490150471591635503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57ec7c9811bf0a746a468f1af8617e31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blocker: {fileID: 2418481080072585390}
