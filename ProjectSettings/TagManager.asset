@@ -8,6 +8,7 @@ TagManager:
   - BlockTrigger
   - Key
   - Door
+  - Persistent
   layers:
   - Default
   - TransparentFX

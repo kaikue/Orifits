@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 92642181295439212, guid: 0ddc15c3254738245b2844d01ec5620d, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2418481080072585390, guid: 0ddc15c3254738245b2844d01ec5620d, type: 3}
       propertyPath: m_Name
       value: blocker top

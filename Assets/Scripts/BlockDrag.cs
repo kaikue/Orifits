@@ -13,6 +13,8 @@ public class BlockDrag : MonoBehaviour
     public Sprite draggingFace;
     public Sprite connectedFace;
     public bool dragging = false;
+    private GameManager gameManager;
+    private bool wasSnapped = true;
 
     public SpriteRenderer faceRenderer;
     private Orifice[] allOrifices;
@@ -29,6 +31,7 @@ public class BlockDrag : MonoBehaviour
 
         allOrifices = FindObjectsOfType<Orifice>();
         myOrifices = gameObject.GetComponentsInChildren<Orifice>();
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     private void SetVisualPosition(Vector3 position)
@@ -57,6 +60,11 @@ public class BlockDrag : MonoBehaviour
                     {
                         Vector3 offset = orifice.transform.position - myOrifice.transform.position;
                         SetVisualPosition(offset);
+                        if (!wasSnapped)
+						{
+                            gameManager.PlaySound(gameManager.attachSound);
+                            wasSnapped = true;
+						}
                     }
 
                     connected = true;
@@ -72,6 +80,11 @@ public class BlockDrag : MonoBehaviour
         else if (dragging)
 		{
             faceRenderer.sprite = draggingFace;
+            if (wasSnapped)
+            {
+                gameManager.PlaySound(gameManager.separateSound);
+                wasSnapped = false;
+            }
         }
         else
 		{

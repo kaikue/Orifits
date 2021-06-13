@@ -2,12 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public const float connectionDistance = 0.1f;
     public const float snapDistance = 2.5f;
-    private Color outsideColor = new Color(0.6f, 1, 1);
+    public const float fadeTime = 0.6f;
+    private const float rotateSpeed = 5;
+    private const float levelTransitionTime = 2;
+    private const float pitchVariation = 0.15f;
+    public Color outsideColor;
+    public bool levelComplete = false;
+
+    private AudioSource audioSource;
+    public AudioClip attachSound;
+    public AudioClip separateSound;
 
     private PlayerMove player;
     private Orifice[] allOrifices;
@@ -17,6 +27,7 @@ public class GameManager : MonoBehaviour
     private Vector2 rotateAnchor;
     private float baseRotation;
     //private float rotateDampen = 20;
+    private Persistent persistent;
 
     private bool dragging = false;
     private bool rotating = false;
@@ -26,6 +37,16 @@ public class GameManager : MonoBehaviour
         player = FindObjectOfType<PlayerMove>();
         allOrifices = FindObjectsOfType<Orifice>();
         allBlocks = FindObjectsOfType<BlockDrag>();
+        audioSource = gameObject.GetComponent<AudioSource>();
+        Persistent[] persistents = FindObjectsOfType<Persistent>();
+        foreach (Persistent persistent in persistents)
+        {
+            if (!persistent.destroying)
+            {
+                this.persistent = persistent;
+                break;
+            }
+        }
         CenterCamera();
     }
 
@@ -35,8 +56,26 @@ public class GameManager : MonoBehaviour
         Camera.main.transform.position = new Vector3(centerPos.x, centerPos.y, Camera.main.transform.position.z);
     }
 
+    public void PlaySound(AudioClip sound, bool randomizePitch = true)
+    {
+        if (randomizePitch)
+        {
+            audioSource.pitch = Random.Range(1 - pitchVariation, 1 + pitchVariation);
+        }
+        else
+        {
+            audioSource.pitch = 1;
+        }
+        audioSource.PlayOneShot(sound);
+    }
+
     private void Update()
     {
+        if (Input.GetButtonDown("Restart"))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         
         if (rotating)
@@ -70,7 +109,6 @@ public class GameManager : MonoBehaviour
             }
             else
 			{
-                float rotateSpeed = 3;
                 Vector2 mouseOffset = mousePos - rotateAnchor;
                 float rotateDiff = -mouseOffset.x + mouseOffset.y;
                 draggingBlock.MoveRotation(baseRotation + rotateDiff * rotateSpeed);
@@ -138,11 +176,8 @@ public class GameManager : MonoBehaviour
         {
             draggingBlock = hit.collider.GetComponent<Rigidbody2D>();
 
-            if (player.insideBlock.transform.parent == draggingBlock.transform)
-            {
-                player.gameObject.SetActive(false);
-                player.transform.parent = draggingBlock.transform;
-            }
+            player.gameObject.SetActive(false);
+            player.transform.parent = player.insideBlock.transform;
 
             foreach (Orifice orifice in allOrifices)
             {
@@ -164,6 +199,8 @@ public class GameManager : MonoBehaviour
             draggingBlock.gameObject.GetComponent<BlockDrag>().SetDragging(true);
             
             Camera.main.backgroundColor = outsideColor;
+
+            persistent.SetInside(false);
         }
     }
 
@@ -226,5 +263,19 @@ public class GameManager : MonoBehaviour
         player.transform.parent = null;
         player.transform.rotation = Quaternion.identity;
         player.gameObject.SetActive(true);
+
+        persistent.SetInside(true);
+    }
+
+    private IEnumerator WaitNextLevel()
+	{
+        yield return new WaitForSeconds(levelTransitionTime);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); //TODO nicer transition
+    }
+
+    public void CompleteLevel()
+	{
+        levelComplete = true;
+        StartCoroutine(WaitNextLevel());
     }
 }
