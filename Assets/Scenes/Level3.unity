@@ -356,7 +356,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: RIGHT CLICK & DRAG
+  m_text: RIGHT CLICK & DRAG TO ROTATE
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ea4a8f7d82618a643a9757ba68d7c696, type: 2}
   m_sharedMaterial: {fileID: 3654735804817336127, guid: ea4a8f7d82618a643a9757ba68d7c696, type: 2}

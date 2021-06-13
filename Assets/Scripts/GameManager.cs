@@ -70,6 +70,14 @@ public class GameManager : MonoBehaviour
         audioSource.PlayOneShot(sound);
     }
 
+    private IEnumerator DelayedRelease()
+    {
+        yield return new WaitForFixedUpdate();
+        dragging = false;
+        rotating = false;
+        ReleaseDraggingBlock();
+    }
+
     private void Update()
     {
         if (Input.GetButtonDown("Restart"))
@@ -78,7 +86,7 @@ public class GameManager : MonoBehaviour
         }
 
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        
+
         if (rotating)
 		{
             if (Input.GetButtonDown("MouseLeft"))
@@ -105,7 +113,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
 				{
-                    ReleaseDraggingBlock();
+                    StartCoroutine(DelayedRelease()); //physics update needs to happen so rotation propagates to player
                 }
             }
             else
@@ -128,12 +136,14 @@ public class GameManager : MonoBehaviour
 		{
             if (Input.GetButtonDown("MouseRight"))
             {
-                rotating = true;
                 draggingBlock.constraints = RigidbodyConstraints2D.FreezePosition;
                 rotateAnchor = mousePos;
                 baseRotation = draggingBlock.rotation;
-
-                if (Input.GetButtonUp("MouseLeft")) dragging = false;
+                rotating = true;
+                if (Input.GetButtonUp("MouseLeft"))
+                {
+                    dragging = false;
+                }
             }
             else if (Input.GetButtonUp("MouseLeft"))
             {
@@ -148,16 +158,6 @@ public class GameManager : MonoBehaviour
         }
         else
 		{
-            if (Input.GetButtonDown("MouseLeft"))
-            {
-                GrabDraggingBlock(mousePos);
-                if (draggingBlock != null)
-				{
-                    draggingBlock.constraints = RigidbodyConstraints2D.FreezeRotation;
-                    dragOffset = new Vector2(draggingBlock.position.x - mousePos.x, draggingBlock.position.y - mousePos.y);
-                    dragging = true;
-                }
-            }
             if (Input.GetButtonDown("MouseRight"))
             {
                 GrabDraggingBlock(mousePos);
@@ -167,6 +167,20 @@ public class GameManager : MonoBehaviour
                     rotateAnchor = mousePos;
                     baseRotation = draggingBlock.rotation;
                     rotating = true;
+                    if (Input.GetButtonDown("MouseLeft"))
+				    {
+                        dragging = true;
+				    }
+                }
+            }
+            else if (Input.GetButtonDown("MouseLeft"))
+            {
+                GrabDraggingBlock(mousePos);
+                if (draggingBlock != null)
+				{
+                    draggingBlock.constraints = RigidbodyConstraints2D.FreezeRotation;
+                    dragOffset = new Vector2(draggingBlock.position.x - mousePos.x, draggingBlock.position.y - mousePos.y);
+                    dragging = true;
                 }
             }
         }
@@ -177,10 +191,12 @@ public class GameManager : MonoBehaviour
         //float diffX = Mathf.Abs(allBlocks[0].transform.position.x - allBlocks[1].transform.position.x);
         //float diffY = Mathf.Abs(allBlocks[0].transform.position.y - allBlocks[1].transform.position.y) * Camera.main.aspect;
         //float dist = Mathf.Sqrt(diffX * diffX + diffY * diffY);
+        mousePos.x -= Camera.main.transform.position.x;
+        mousePos.y -= Camera.main.transform.position.y;
         float mouseY = mousePos.y * Camera.main.aspect;
         float dist = Mathf.Sqrt(mousePos.x * mousePos.x + mouseY * mouseY);
-        float zoomScale = 0.6f;
-        Camera.main.orthographicSize = Mathf.Clamp(dist * zoomScale, 16, 32);
+        float zoomScale = 0.5f;
+        Camera.main.orthographicSize = Mathf.Clamp(dist * zoomScale + 8, 16, 32);
 	}
 
     private void GrabDraggingBlock(Vector2 mousePos)
