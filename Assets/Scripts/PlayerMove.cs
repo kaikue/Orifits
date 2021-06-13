@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
-    private float speed = 8;
-    private float jumpForce = 10;
-    private float gravityForce = 20;
-    private float pitchVariation = 0.15f;
+    private const float speed = 8;
+    private const float jumpForce = 10;
+    private const float gravityForce = 20;
+    private const float pitchVariation = 0.15f;
+    private const float stepTime = 0.2f;
 
     private Rigidbody2D rb;
     private EdgeCollider2D ec;
@@ -19,6 +20,12 @@ public class PlayerMove : MonoBehaviour
 
     private int keys = 0;
 
+    public Sprite walkImage;
+    private Sprite standImage;
+    private SpriteRenderer spriteRenderer;
+    private float timeSinceLastStep = 0;
+    private bool isStepping = true;
+
     public GameObject insideBlock;
 
     private AudioSource audioSource;
@@ -28,6 +35,8 @@ public class PlayerMove : MonoBehaviour
     public AudioClip keySound;
     public AudioClip openSound;
     public AudioClip lockedSound;
+    public AudioClip winSound;
+    public GameObject dieParticles;
 
     private void Start()
     {
@@ -36,6 +45,8 @@ public class PlayerMove : MonoBehaviour
         tetherRenderer = gameObject.GetComponent<LineRenderer>();
         audioSource = gameObject.GetComponent<AudioSource>();
         gameManager = FindObjectOfType<GameManager>();
+        spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        standImage = spriteRenderer.sprite;
     }
 
     private void Update()
@@ -105,6 +116,28 @@ public class PlayerMove : MonoBehaviour
         Vector2 vel = new Vector2(xVel, yVel);
         rb.velocity = vel;
         rb.MovePosition(rb.position + vel * Time.fixedDeltaTime);
+
+        if (!onGround)
+		{
+            spriteRenderer.sprite = walkImage;
+		}
+        else
+		{
+            if (xVel != 0)
+			{
+                spriteRenderer.sprite = isStepping ? walkImage : standImage;
+                timeSinceLastStep += Time.fixedDeltaTime;
+                if (timeSinceLastStep > stepTime)
+				{
+                    timeSinceLastStep = 0;
+                    isStepping = !isStepping;
+				}
+            }
+            else
+			{
+                spriteRenderer.sprite = standImage;
+            }
+		}
     }
 
 	private void OnCollisionEnter2D(Collision2D collision)
@@ -140,6 +173,13 @@ public class PlayerMove : MonoBehaviour
             Destroy(collider);
         }
 
+        if (collider.CompareTag("Spikes"))
+        {
+            Instantiate(dieParticles, transform.position, Quaternion.identity);
+            gameManager.DelayRestart();
+            Destroy(gameObject);
+        }
+
         TriggerInstruction instruction = collider.GetComponent<TriggerInstruction>();
         if (instruction != null)
 		{
@@ -166,6 +206,7 @@ public class PlayerMove : MonoBehaviour
             else if (heart != tetheredHeart)
 			{
                 gameManager.CompleteLevel();
+                PlaySound(winSound, false);
                 tetherRenderer.SetPosition(1, heart.transform.position);
                 Color color = heart.gameObject.GetComponent<SpriteRenderer>().color;
                 tetherRenderer.endColor = color;

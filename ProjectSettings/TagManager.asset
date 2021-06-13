@@ -9,6 +9,8 @@ TagManager:
   - Key
   - Door
   - Persistent
+  - Spikes
+  - BlockParticles
   layers:
   - Default
   - TransparentFX

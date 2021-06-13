@@ -10,7 +10,8 @@ public class GameManager : MonoBehaviour
     public const float snapDistance = 2.5f;
     public const float fadeTime = 0.6f;
     private const float rotateSpeed = 5;
-    private const float levelTransitionTime = 2;
+    private const float levelTransitionTime = 1.5f;
+    private const float levelRestartTime = 1.0f;
     private const float pitchVariation = 0.15f;
     public Color outsideColor;
     public bool levelComplete = false;
@@ -73,7 +74,7 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetButtonDown("Restart"))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            RestartLevel();
         }
 
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -257,6 +258,12 @@ public class GameManager : MonoBehaviour
             orifice.outsideRenderer.enabled = false;
         }
 
+        GameObject[] blockParticles = GameObject.FindGameObjectsWithTag("BlockParticles");
+        foreach (GameObject blockParticle in blockParticles)
+		{
+            Destroy(blockParticle);
+		}
+
         CenterCamera();
         Camera.main.backgroundColor = Color.black;
 
@@ -273,9 +280,25 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); //TODO nicer transition
     }
 
+    private void RestartLevel()
+	{
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
     public void CompleteLevel()
 	{
         levelComplete = true;
         StartCoroutine(WaitNextLevel());
+    }
+
+    private IEnumerator WaitRestartLevel()
+    {
+        yield return new WaitForSeconds(levelRestartTime);
+        RestartLevel();
+    }
+
+    public void DelayRestart()
+	{
+        StartCoroutine(WaitRestartLevel());
     }
 }

@@ -213,6 +213,7 @@ MonoBehaviour:
   idleFace: {fileID: 21300000, guid: 48fc8267e566c83438573a67faecd9eb, type: 3}
   draggingFace: {fileID: 21300000, guid: 9becb2252fc82f34eabadb663ace6a93, type: 3}
   connectedFace: {fileID: 21300000, guid: bf885094e621ed841ba031fb2b5f4040, type: 3}
+  blockParticles: {fileID: 9103421043074660729, guid: 99bdca9f99a2eef42b34906ce9f56400, type: 3}
   dragging: 0
   faceRenderer: {fileID: 828449478699384050}
 --- !u!61 &7570864564860254947

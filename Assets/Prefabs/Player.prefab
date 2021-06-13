@@ -145,6 +145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f17d59170126cc46b93e58e46d6c108, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  walkImage: {fileID: 21300000, guid: 1e9180014f992c24699fbddf43e1070f, type: 3}
   insideBlock: {fileID: 0}
   jumpSound: {fileID: 8300000, guid: 5e85efe7a1552c541a7c9e31d079b855, type: 3}
   bonkSound: {fileID: 8300000, guid: 9d3250e7753b29e48b1b29fe64bc80c8, type: 3}
@@ -152,6 +153,8 @@ MonoBehaviour:
   keySound: {fileID: 8300000, guid: e79e8b94c76216140a370b80c3c3497c, type: 3}
   openSound: {fileID: 8300000, guid: ca521e64af01f904488e1ecc0ff8905b, type: 3}
   lockedSound: {fileID: 8300000, guid: 463d30a171ca4f2418fa876b200a0643, type: 3}
+  winSound: {fileID: 8300000, guid: f5ba3d6c9daff724a86257ad8b3a2392, type: 3}
+  dieParticles: {fileID: 9103421043074660729, guid: bfcdf76aaed57a14ea2026270cbda149, type: 3}
 --- !u!120 &4858609230792117667
 LineRenderer:
   m_ObjectHideFlags: 0
