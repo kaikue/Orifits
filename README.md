@@ -1,5 +1,13 @@
 # Orifits
 
+## Controls
+
+- Arrow keys or A/D to walk
+- Space to jump
+- Left click & drag to move block
+- Right click & drag to rotate block
+- R to restart level
+
 ## Credits
 
 - Programming and art by Kai Kuehner
@@ -16,28 +24,9 @@
 - Level complete: https://freesound.org/people/Higgs01/sounds/428156/
 - Other sounds made using SFXR: https://www.drpetter.se/project_sfxr.html
 
-## Controls
-
-- Arrow keys or A/D to walk
-- Space to jump
-- Left click & drag to move block
-- Right click & drag to rotate block
-- R to restart level
-
 ## TODO
 
-- Dimensions: 920x600
-
-- Levels
-	- introduce spikes- force a particular rotation
-	- tricky platforming back and forth w/ spikes
-	- something where you can't just put them together because of a protrusion
-	- T, U
-	- More rotate
-	- 69
-- Fixes
-	- Zoom (when in outside mode?) to encompass both blocks
-	- remember to add different colors to all level blocks
+- Note: Dimensions are 920x600
 - Extra polish
 	- Level end transition (show block faces?)
 	- Organic looking decorations for inside
@@ -46,10 +35,11 @@
 	- Blocks look at each other
 	- Backgrounds
 	- Blocks wobble when grabbed
-	- Round corners of block guys' colliders for better dragging
+	- Round corners of block colliders for better dragging
 	- Particles
 	- Beating hearts
-- Lerp everything for polish
-	- block faces fade in/out
-	- block position dragging/rotating
-		- slide around more
+	- Lerp everything
+		- background color
+		- block faces fade in/out
+		- block position dragging/rotating
+			- slide around more

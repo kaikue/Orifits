@@ -25,9 +25,7 @@ public class PlayerMove : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private float timeSinceLastStep = 0;
     private bool isStepping = true;
-
-    public GameObject insideBlock;
-
+    
     private AudioSource audioSource;
     public AudioClip jumpSound;
     public AudioClip bonkSound;
@@ -161,10 +159,6 @@ public class PlayerMove : MonoBehaviour
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
         GameObject collider = collision.gameObject;
-        if (collider.CompareTag("BlockTrigger"))
-		{
-            insideBlock = collider;
-        }
 
         if (collider.CompareTag("Key"))
         {

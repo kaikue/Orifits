@@ -113,6 +113,7 @@ public class GameManager : MonoBehaviour
                 Vector2 mouseOffset = mousePos - rotateAnchor;
                 float rotateDiff = -mouseOffset.x + mouseOffset.y;
                 draggingBlock.MoveRotation(baseRotation + rotateDiff * rotateSpeed);
+                ScaleCamera(mousePos);
 
                 //TODO better rotating method
                 //TODO: this is giving wrong values?
@@ -142,6 +143,7 @@ public class GameManager : MonoBehaviour
             else
 			{
                 draggingBlock.MovePosition(mousePos + dragOffset);
+                ScaleCamera(mousePos);
             }
         }
         else
@@ -170,15 +172,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void ScaleCamera(Vector2 mousePos)
+	{
+        //float diffX = Mathf.Abs(allBlocks[0].transform.position.x - allBlocks[1].transform.position.x);
+        //float diffY = Mathf.Abs(allBlocks[0].transform.position.y - allBlocks[1].transform.position.y) * Camera.main.aspect;
+        //float dist = Mathf.Sqrt(diffX * diffX + diffY * diffY);
+        float mouseY = mousePos.y * Camera.main.aspect;
+        float dist = Mathf.Sqrt(mousePos.x * mousePos.x + mouseY * mouseY);
+        float zoomScale = 0.6f;
+        Camera.main.orthographicSize = Mathf.Clamp(dist * zoomScale, 16, 32);
+	}
+
     private void GrabDraggingBlock(Vector2 mousePos)
     {
+        if (player == null) return;
+
         RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, 1, LayerMask.GetMask("Block"));
         if (hit.collider != null)
         {
             draggingBlock = hit.collider.GetComponent<Rigidbody2D>();
 
             player.gameObject.SetActive(false);
-            player.transform.parent = player.insideBlock.transform;
+            GameObject insideBlock = Physics2D.OverlapPoint(player.transform.position, LayerMask.GetMask("Block")).gameObject;
+            player.transform.parent = insideBlock.transform;
 
             foreach (Orifice orifice in allOrifices)
             {
